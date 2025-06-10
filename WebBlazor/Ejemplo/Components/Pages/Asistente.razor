@@ -1,0 +1,282 @@
+﻿@page "/asistente"
+@using System.ComponentModel.DataAnnotations
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h3>Dialogo</h3>
+
+
+@if (pasoActual < Etapa.Etapa4)
+{
+    <div class="row">
+        <div class="row-12">
+            <button type="button" @onclick="OnMostrarPaso1_Click" class="btn btn-round @button1class" disabled="@(pasoAlcanzado < Etapa.Etapa1)" data-target="approved">Paso 1</button>
+            <button type="button" @onclick="OnMostrarPaso2_Click" class="btn btn-round @button2class" disabled="@(pasoAlcanzado < Etapa.Etapa2 )" data-target="pending">Paso 2</button>
+            <button type="button" @onclick="OnMostrarPaso3_Click" class="btn btn-round @button3class" disabled="@(pasoAlcanzado <  Etapa.Etapa3 )" data-target="pending">Paso 3</button>
+        </div>
+    </div>
+}
+<div class="col-12">
+
+    @if (pasoActual == Etapa.Etapa1)
+    {
+        <div class="card p-2" @key="@Etapa.Etapa1">
+            <EditForm Model="@etapa1ViewModel" OnValidSubmit="OnMostrarPaso2_Click" FormName="etapa1">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label>Campo 1</label>
+                    <InputText @bind-Value="@etapa1ViewModel.Campo1" class="form-control" />
+                    <ValidationMessage For="@(() => etapa1ViewModel.Campo1)" style="color:indianred" />
+                </div>
+
+                <div class="form-group">
+                    <label>Campo 2</label>
+                    <InputText @bind-Value="@etapa1ViewModel.Campo2" class="form-control" />
+                    <ValidationMessage For="@(() => etapa1ViewModel.Campo2)" style="color:indianred" />
+                </div>
+
+                <div>
+                    <button type="submit" class="btn btn-success btn-round">Siguiente</button>
+                </div>
+            </EditForm>
+        </div>
+    }
+    else @if (pasoActual == Etapa.Etapa2)
+    {
+        <div class="card p-2" @key="@Etapa.Etapa2">
+            <EditForm Model="@etapa2ViewModel" OnValidSubmit="OnMostrarPaso3_Click" FormName="etapa2">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-check">
+                    <InputCheckbox class="form-check-input" @bind-Value="etapa2ViewModel.RequiereCampo2" />
+                    <label class="form-check-label">Acepto los términos</label>
+                </div>
+
+                <div class="form-group">
+                    <label>Campo 1</label>
+                    <InputText @bind-Value="@etapa2ViewModel.Campo1" class="form-control" />
+                    <ValidationMessage For="@(() => etapa2ViewModel.Campo1)" style="color:indianred" />
+                </div>
+
+                <div class="form-group">
+                    <label>Campo 2</label>
+                    <InputText @bind-Value="@etapa2ViewModel.Campo2" class="form-control" />
+                    <ValidationMessage For="@(() => etapa2ViewModel.Campo2)" style="color:indianred" />
+                </div>
+
+                <div>
+                    <button @onclick="OnMostrarPaso1_Click" class="btn btn-success btn-round">Anterior</button>
+                    <button type="submit" class="btn btn-success btn-round">Siguiente</button>
+                </div>
+            </EditForm>
+        </div>
+    }
+    else @if (pasoActual == Etapa.Etapa3)
+    {
+        <div class="card p-2" @key="@Etapa.Etapa3">
+            <EditForm Model="@etapa3ViewModel" OnValidSubmit="OnConfirmar_Click" FormName="etapa3">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-check">
+                    <InputCheckbox class="form-check-input" @bind-Value="etapa3ViewModel.RequiereCampo2" />
+                    <label class="form-check-label">Acepto los términos</label>
+                </div>
+
+                <div class="form-group">
+                    <label>Campo 1</label>
+                    <InputText @bind-Value="@etapa3ViewModel.Campo1" class="form-control" />
+                    <ValidationMessage For="@(() => etapa3ViewModel.Campo1)" style="color:indianred" />
+                </div>
+
+                <div class="form-group">
+                    <label>Campo 2</label>
+                    <InputText @bind-Value="@etapa3ViewModel.Campo2" class="form-control" />
+                    <ValidationMessage For="@(() => etapa3ViewModel.Campo2)" style="color:indianred" />
+                </div>
+                <!-- Mensaje de validación personalizado para la validación condicional -->
+                @if (mostrarErrorCampo2)
+                {
+                    <div style="color:indianred; font-size: 0.875em;">Campo2 es requerido cuando aceptas los términos</div>
+                }
+
+                <div>
+                    <button @onclick="OnMostrarPaso2_Click" class="btn btn-success btn-round">Anterior</button>
+                    <button type="submit" class="btn btn-success btn-round">Confirmar</button>
+                </div>
+            </EditForm>
+        </div>
+    }
+    else @if (pasoActual == Etapa.Etapa4)
+    {
+        <div @key="@Etapa.Etapa4">
+            <p>confirmado</p>
+        </div>
+    }
+</div>
+
+@code {
+
+    Etapa1ViewModel etapa1ViewModel = new();
+
+    Etapa2ViewModel etapa2ViewModel = new();
+
+    Etapa3ViewModel etapa3ViewModel = new();
+
+    #region manejo del dialogo
+
+    string button1class;
+    string button2class;
+    string button3class;
+
+    Etapa pasoActual;
+    Etapa pasoAlcanzado;
+    bool mostrarErrorCampo2 = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await OnMostrarPaso1_Click();
+        }
+    }
+
+    public void HabilitarBotones()
+    {
+        pasoAlcanzado = pasoActual > pasoAlcanzado ? pasoActual : pasoAlcanzado;
+    }
+
+    async Task OnMostrarPaso1_Click()
+    {
+        pasoActual = Etapa.Etapa1;
+        HabilitarBotones();
+        button1class = "bg-blue";
+        button2class = "btn-primary";
+        button3class = "btn-primary";
+
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    async Task OnMostrarPaso2_Click()
+    {
+        pasoActual = Etapa.Etapa2;
+        HabilitarBotones();
+        button1class = "btn-primary";
+        button2class = "bg-blue";
+        button3class = "btn-primary";
+
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    async Task OnMostrarPaso3_Click()
+    {
+        pasoActual = Etapa.Etapa3;
+        HabilitarBotones();
+        button1class = "btn-primary";
+        button2class = "btn-primary";
+        button3class = "bg-blue";
+
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    async Task OnConfirmar_Click(EditContext context)
+    {
+        bool isValid = context.Validate();
+
+
+        //esta forma de validar es mas sencilla.
+
+        // Validación condicional personalizada
+        if (etapa3ViewModel.RequiereCampo2 && string.IsNullOrWhiteSpace(etapa3ViewModel.Campo2))
+        {
+            mostrarErrorCampo2 = true;
+            isValid = false;
+        }
+
+        if (isValid)
+        {
+            pasoActual = Etapa.Etapa4;
+            HabilitarBotones();
+            button1class = "btn-primary";
+            button2class = "btn-primary";
+            button3class = "btn-primary";
+
+            StateHasChanged();
+        }
+        else
+        {
+            
+        }
+    }
+
+    enum Etapa
+    {
+        Etapa1 = 1,
+        Etapa2 = 2,
+        Etapa3 = 3,
+        Etapa4 = 4
+    }
+
+    #endregion
+
+    #region
+
+    class Etapa1ViewModel
+    {
+        public string Campo1 { get; set; }
+
+        public string Campo2 { get; set; }
+    }
+
+    class Etapa2ViewModel : IValidatableObject
+
+    {
+        [Required]
+        public string Campo1 { get; set; }
+                
+        [StringLength(10, ErrorMessage = "Campo2 es demasiado largo")]
+        public string Campo2 { get; set; }
+
+        public bool RequiereCampo2 { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (RequiereCampo2 && string.IsNullOrWhiteSpace(Campo2))
+            {
+                yield return new ValidationResult(
+                    "Campo2 es requerido cuando aceptas los términos",
+                    new[] { nameof(Campo2) });
+            }
+        }
+
+    }
+
+    class Etapa3ViewModel
+    {
+        [Required]
+        public string Campo1 { get; set; }
+
+        [StringLength(10, ErrorMessage = "Campo2 es demasiado largo")]
+        public string Campo2 { get; set; }
+
+        public bool RequiereCampo2 { get; set; }
+
+    }
+
+    #endregion
+}
