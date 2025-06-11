@@ -5,6 +5,7 @@ using EjemploDataWeb.Components;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using EjemploData.Common.MMS;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,12 +66,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-#region autentificación-autorizacion
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseAntiforgery();
-#endregion
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 

@@ -13,22 +13,28 @@
         <ValidationSummary />
 
         <div class="form-group">
-            <InputSelect @bind-Value="_EjemploModelView.IdTipo" class="form-select" @bind:after="OnTipoSelect">
+            <InputSelect @bind-Value="_EjemploModelView.IdTipo" class="form-select" @bind-Value:after="OnTipoSelect">
 
                 <option value="0">Seleccione un tipo!</option>
 
                 @foreach (var opcion in _TiposModelView)
                 {
-                    <option value="@opcion.Id">@opcion.Descripcion</option>
+                    <option value="@opcion.Id">@opcion.Descripcion??"Sin descripción"</option>
                 }
             </InputSelect>
         </div>
 
+        <button type="submit">Enviar</button>
+
     </EditForm>
+
+
+    <div>@Seleccion</div>
 </div>
 
 @code {
     EjemploModelView _EjemploModelView = new EjemploModelView();
+    string Seleccion;
 
     List<TipoModelView> _TiposModelView = new List<TipoModelView>();
 
@@ -57,8 +63,15 @@
     {
         if (firstRender)
         {
-           
+
         }
+    }
+
+    public void onEnviar()
+    {
+        
+        Seleccion = _EjemploModelView.TipoDescripcion;
+
     }
 
     void OnTipoSelect()
@@ -73,12 +86,12 @@
     class EjemploModelView
     {
         public int IdTipo { get; set; }
-        public string TipoDescripcion { get; set; }
+        public string? TipoDescripcion { get; set; }
     }
 
     class TipoModelView
     {
         public int Id { get; set; }
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
     }
 }

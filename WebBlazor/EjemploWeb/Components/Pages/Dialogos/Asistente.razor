@@ -219,7 +219,7 @@
         }
         else
         {
-            
+
         }
     }
 
@@ -243,11 +243,10 @@
     }
 
     class Etapa2ViewModel : IValidatableObject
-
     {
         [Required]
         public string Campo1 { get; set; }
-                
+
         [StringLength(10, ErrorMessage = "Campo2 es demasiado largo")]
         public string Campo2 { get; set; }
 

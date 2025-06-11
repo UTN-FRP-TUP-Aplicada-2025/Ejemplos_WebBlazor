@@ -1,7 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using EjemploData.DALs;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace EjemploData.DALs.MSSDALs;
+namespace EjemploData.Common.MMS;
 
 public class SqlServerTransaction : ITransaction<SqlTransaction>
 {

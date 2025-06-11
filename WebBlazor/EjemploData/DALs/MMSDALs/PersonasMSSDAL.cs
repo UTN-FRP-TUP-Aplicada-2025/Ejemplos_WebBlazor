@@ -1,15 +1,18 @@
 ﻿using EjemploData.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace EjemploData.DALs.MSSDALs;
 
 public class PersonasMSSDAL : IBaseDAL<PersonaModel, int, SqlTransaction>
 {
     private readonly SqlConnection _sqlConnection;
-    
-    public PersonasMSSDAL(SqlConnection sqlConnection)
+    private readonly ILogger<PersonasMSSDAL> _logger;
+    public PersonasMSSDAL(SqlConnection sqlConnection, ILogger<PersonasMSSDAL> logger)
     {
         _sqlConnection = sqlConnection;
+        _logger = logger;
     }
 
     public async Task<List<PersonaModel>> GetAll(ITransaction<SqlTransaction>? transaccion = null)
@@ -112,14 +115,37 @@ WHERE Id = @Id";
         return eliminados > 0;
     }
 
-    private async Task<SqlConnection> GetOpenedConnectionAsync(ITransaction<SqlTransaction>? transaccion)
+    private async Task<SqlConnection> GetOpenedConnectionAsync(ITransaction<SqlTransaction>? transaccion, CancellationToken cancellationToken = default)
     {
-        var conexion = transaccion?.GetInternalTransaction()?.Connection ?? _sqlConnection;
-        if (conexion.State == System.Data.ConnectionState.Closed)
+        try
         {
-            await conexion.OpenAsync();
+            var conexion = transaccion?.GetInternalTransaction()?.Connection ?? _sqlConnection;
+            if (conexion.State == System.Data.ConnectionState.Closed)
+            {
+                if (conexion.State == System.Data.ConnectionState.Closed)
+                {
+                    _logger?.LogDebug("Estado de conexión: {Estado}. Abriendo conexión...", conexion.State);
+
+                    using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(60)); // 60 segundos timeout
+                    using var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+
+                    await conexion.OpenAsync(combinedCts.Token);
+
+                    _logger?.LogDebug("Conexión abierta exitosamente");
+                }
+                else
+                {
+                    _logger?.LogDebug("Conexión ya estaba abierta. Estado: {Estado}", conexion.State);
+                }
+            }
+            return conexion;
         }
-        return conexion;
+        catch (SqlException sqlEx)
+        {
+            _logger.LogError(sqlEx, "Error SQL al abrir conexión: {ErrorNumber} - {Message}",
+                sqlEx.Number, sqlEx.Message);
+            throw;
+        }
     }
 
     private PersonaModel ReadAsObjeto(SqlDataReader reader)
