@@ -1,0 +1,84 @@
+﻿@page "/select"
+
+<h3>Select</h3>
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+
+<div>
+    <EditForm Model="@_EjemploModelView" @OnValidSubmit="onEnviar">
+
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <InputSelect @bind-Value="_EjemploModelView.IdTipo" class="form-select" @bind:after="OnTipoSelect">
+
+                <option value="0">Seleccione un tipo!</option>
+
+                @foreach (var opcion in _TiposModelView)
+                {
+                    <option value="@opcion.Id">@opcion.Descripcion</option>
+                }
+            </InputSelect>
+        </div>
+
+    </EditForm>
+</div>
+
+@code {
+    EjemploModelView _EjemploModelView = new EjemploModelView();
+
+    List<TipoModelView> _TiposModelView = new List<TipoModelView>();
+
+    private bool _datosInicializados = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!_datosInicializados)
+        {
+            _TiposModelView = new List<TipoModelView>
+            {
+                   new TipoModelView
+                   {
+                        Id=1, Descripcion="Opción 1"
+                   } ,
+                   new TipoModelView
+                   {
+                        Id=2, Descripcion="Opción 2"
+                   }
+            };
+            StateHasChanged();
+        }
+    }
+
+    async protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+           
+        }
+    }
+
+    void OnTipoSelect()
+    {
+        var rubroSeleccionado = _TiposModelView.FirstOrDefault(r => r.Id == _EjemploModelView.IdTipo);
+        if (rubroSeleccionado != null)
+        {
+            _EjemploModelView.TipoDescripcion = rubroSeleccionado?.Descripcion ?? "";
+        }
+    }
+
+    class EjemploModelView
+    {
+        public int IdTipo { get; set; }
+        public string TipoDescripcion { get; set; }
+    }
+
+    class TipoModelView
+    {
+        public int Id { get; set; }
+        public string Descripcion { get; set; }
+    }
+}

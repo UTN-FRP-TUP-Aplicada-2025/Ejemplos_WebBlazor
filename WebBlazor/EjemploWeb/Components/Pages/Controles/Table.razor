@@ -1,0 +1,55 @@
+﻿@page "/table"
+
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<div class="container">
+
+    <h3>Table</h3>
+
+    <div class="card p-2 col-8">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Campo1</th>
+                    <th>Campo2</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var registro in _registrosViewModel)
+                {
+                    <tr>
+                        <td>@registro.Campo1</td>
+                        <td>@registro.Campo2</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code
+{
+    List<RegistroViewModel> _registrosViewModel { get; set; } = new List<RegistroViewModel>
+    {
+        new RegistroViewModel()
+        {
+             Campo1="valor11",
+             Campo2="valor12"
+        },
+        new RegistroViewModel()
+        {
+             Campo1="valor21",
+             Campo2="valor22"
+        }
+    };
+
+    class RegistroViewModel
+    {
+        public string Campo1 { get; set; }
+        public string Campo2 { get; set; }
+    }
+}

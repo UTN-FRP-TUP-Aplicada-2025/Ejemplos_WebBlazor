@@ -4,8 +4,7 @@
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 
-<h3>Dialogo</h3>
-
+<h3>Asistente</h3>
 
 @if (pasoActual < Etapa.Etapa4)
 {
@@ -142,15 +141,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
+        await OnMostrarPaso1_Click();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await OnMostrarPaso1_Click();
-        }
+        // if (firstRender)
+        // {
+        //     await OnMostrarPaso1_Click();
+        // }
     }
 
     public void HabilitarBotones()

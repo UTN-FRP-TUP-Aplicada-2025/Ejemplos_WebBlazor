@@ -1,0 +1,72 @@
+﻿@page "/formulario-simple"
+@using System.ComponentModel.DataAnnotations
+
+
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+
+<div class="container">
+    
+    <h3>Formulario Simple</h3>
+
+    <div class="card p-2 col-8">
+        <EditForm Model="@_EjemploModelView" OnValidSubmit="OnSubmit" FormName="etapa1">
+            
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label" for="campo1">Campo 1 (texto)</label>
+                <InputText id="campo1" class="form-control" @bind-Value="_EjemploModelView.Campo1" />
+                <ValidationMessage For="@(() => _EjemploModelView.Campo1)" style="color:indianred" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Género</label>
+                <InputRadioGroup class="mb-3" @bind-Value="_EjemploModelView.Campo2">
+                    <div class="form-check">
+                        <InputRadio id="opcion1" class="form-check-input" Value=@("Opción 1") />
+                        <label class="form-check-label" for="opcion1">Opcion 1</label>
+                    </div>
+                    <div class="form-check">
+                        <InputRadio id="opcion1" class="form-check-input" Value=@("Opción 2") />
+                        <label class="form-check-label" for="opcion2">Opción 2</label>
+                    </div>
+                </InputRadioGroup>
+                <ValidationMessage For="@(() => _EjemploModelView.Campo2)" style="color:indianred" />
+            </div>
+            
+            <div class="form-check mb-3">
+                <InputCheckbox id="campo3" class="form-check-input" @bind-Value="_EjemploModelView.Campo3" />
+                <label class="form-check-label" for="campo3">Campo3</label>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code 
+{
+    EjemploModelView _EjemploModelView=new();
+
+    public void OnSubmit()
+    {
+
+    }
+
+    class EjemploModelView
+    {
+        [Required(ErrorMessage = "El campo de texto es obligatorio.")]
+        public string Campo1 { get; set; }
+
+        [Required(ErrorMessage = "Seleccione una opción.")]
+        public string Campo2 { get; set; }
+
+        public bool Campo3 { get; set; }
+    }
+}
