@@ -1,16 +1,19 @@
 using EjemploAPI.Components;
+using EjemploAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+#region entidades de datos y servicio
+builder.Services.AddScoped<PersonasService>();
+#endregion
 
 #region restapi y swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 #endregion
-
 
 var app = builder.Build();
 

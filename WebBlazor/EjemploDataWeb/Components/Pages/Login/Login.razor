@@ -1,0 +1,93 @@
+﻿@page "/login"
+
+@using EjemploDataWeb.Components.Layout
+
+@layout LoginLayout
+
+@using EjemploData.Models
+@using EjemploData.Services
+@using System.Security.Claims
+
+@* esta using hace visible a SignOutAsync*@
+@using Microsoft.AspNetCore.Authentication
+
+<div class="container">
+
+    <h3>Login</h3>
+
+    <div class="card p-2 col-8">
+        <EditForm Model="@usuarioModel" OnValidSubmit="OnSubmit" FormName="LoginForm" Enhance>
+
+            @if (isError)
+            {
+                <div class="alert-danger">@error</div>
+            }
+            <DataAnnotationsValidator  />
+            <ValidationSummary class="alert alert-danger" />
+
+            <div class="mb-3">
+                <label class="form-label" for="campo1">Nombre</label>
+                <InputText id="usuario" class="form-control" @bind-Value="usuarioModel.Nombre" />
+                <ValidationMessage For="@(() => usuarioModel.Nombre)" style="color:indianred" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="campo1">Clave</label>
+                <InputText id="clave" type="password"  class="form-control" @bind-Value="usuarioModel.Clave" />
+                <ValidationMessage For="@(() => usuarioModel.Clave)" style="color:indianred" />
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary">Ingresar</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code
+{
+    string error;
+    bool isError;
+
+    [SupplyParameterFromForm]
+    private UsuarioModel usuarioModel { get; set; } = new();
+
+    [Inject] UsuariosService _usuarioService { get; set; }
+    [Inject] IHttpContextAccessor HttpContextAccessor { get; set; }
+    [Inject] Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery { get; set; }
+
+    async public Task OnSubmit()
+    {
+        if (await _usuarioService.VerificarLogin(usuarioModel) ==null)
+        {
+            error= " Usuario o Contraseña no válidos!";
+            isError = true;
+            return;
+        }
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, usuarioModel.Nombre),
+            new Claim("CUIT", "23244324") // claim personalizada
+        };
+
+        #region claim
+        var identity = new ClaimsIdentity(claims, "Cookies");
+        var principal = new ClaimsPrincipal(identity);
+        #endregion
+
+        var httpContext = HttpContextAccessor.HttpContext;
+        if (httpContext != null)
+        {
+            await httpContext.SignInAsync("Cookies", principal);
+            var returnUrl = httpContext.Request.Query["returnurl"];
+            returnUrl = "/personas";
+            Navigation.NavigateTo(returnUrl, forceLoad: true);
+        }
+        else
+        {
+            error = "No se pudo iniciar sesión debido a un error interno.";
+        }
+
+    }
+}
