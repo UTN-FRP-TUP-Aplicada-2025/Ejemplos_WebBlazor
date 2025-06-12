@@ -14,7 +14,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 #region entidades de datos y negocio
-builder.Services.AddTransient<SqlConnection>(sp =>
+builder.Services.AddSingleton<SqlConnection>(sp =>
 {
     var configuration = sp.GetService<IConfiguration>();
     var connectionString = configuration.GetConnectionString("CadenaConexion");
@@ -66,6 +66,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
