@@ -12,7 +12,7 @@
 @using EjemploData.Services
 @using Microsoft.AspNetCore.Authorization
 
-
+<div class="container">
 @inject NavigationManager NavManager
 
 @if (isVisibleFormDetailRegistro == true)
@@ -75,7 +75,7 @@ else if (isVisibleFormNewEditRegistro == true)
                     <InputDate id="fechaNacimiento" @bind-Value="_personaModel.FechaNacimiento" class="form-control" />
                     <ValidationMessage For="() => _personaModel.FechaNacimiento" class="text-danger" />
                 </div>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary">Crear Registro</button>
             </EditForm>
         </div>
     </div>
@@ -118,6 +118,7 @@ else
         </tbody>
     </table>
 }
+</div>
 
 @code {
     [SupplyParameterFromForm]
