@@ -1,0 +1,15 @@
+﻿@page "/prueba-ejemplo"
+
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h3>PruebaEjemplo</h3>
+
+<EjemploComponent @bind-dato="valor"></EjemploComponent>
+
+<div>@valor</div>
+
+@code {
+    int valor;
+}

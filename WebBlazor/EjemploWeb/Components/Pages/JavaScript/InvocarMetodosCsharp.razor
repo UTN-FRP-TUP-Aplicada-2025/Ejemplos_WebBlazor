@@ -1,0 +1,34 @@
+﻿@page "/invocar-metodo-csharp-no-static"
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+@inject IJSRuntime JS
+
+<button @onclick="Iniciar">Invocar instancia</button>
+
+<p>@resultado</p>
+
+@code {
+    private string resultado;
+
+    private DotNetObjectReference<InvocarMetodosCsharp> objRef;
+
+    protected override void OnInitialized()
+    {
+        objRef = DotNetObjectReference.Create(this);
+    }
+
+    private async Task Iniciar()
+    {
+        await JS.InvokeVoidAsync("llamarInstanciaCSharp", objRef);
+    }
+
+    [JSInvokable]
+    public Task MostrarInstancia(string valor)
+    {
+        resultado = $"Mensaje recibido: {valor}";
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+}

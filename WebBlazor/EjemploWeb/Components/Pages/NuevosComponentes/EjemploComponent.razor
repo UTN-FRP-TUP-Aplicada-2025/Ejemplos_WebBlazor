@@ -1,0 +1,31 @@
+﻿
+
+<InputNumber @bind-Value="dato" @bind-Value:after="OnFieldChanged"></InputNumber>
+
+@code
+{
+    [Parameter]
+    public int dato { get; set; }
+
+    [Parameter]
+    public EventCallback<int> datoChanged { get; set; }
+
+    private int _previousdato;
+
+    protected override void OnParametersSet()
+    {
+        if (dato != _previousdato)
+        {
+            _previousdato = dato;
+        }
+    }
+
+    private async Task OnFieldChanged()
+    {
+
+            await datoChanged.InvokeAsync(dato);
+
+    }
+
+    
+}

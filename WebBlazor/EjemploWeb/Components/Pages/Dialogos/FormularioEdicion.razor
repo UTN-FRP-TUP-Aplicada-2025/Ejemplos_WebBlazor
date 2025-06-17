@@ -1,0 +1,309 @@
+﻿@page "/formulario-edicion"
+@using EjemploWeb.Models
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<div class="container">
+
+    @if (hasError)
+    {
+        <div class="card  p-2 m-2">
+            <div class="alert">@error</div>
+        </div>
+    }
+
+
+    <div class="card  p-2 m-2">
+        @if (estadoForm == PersonaEstado.View)
+        {
+            <div>
+                <h2>Datos de la persona</h2>
+
+                <hr />
+                @if (_personaModel is null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <dl class="row">
+
+                        <dt class="col-sm-2">Id</dt>
+                        <dd class="col-sm-10">@_personaModel?.Id</dd>
+
+                        <dt class="col-sm-2">DNI</dt>
+                        <dd class="col-sm-10">@_personaModel?.DNI</dd>
+
+                        <dt class="col-sm-2">Nombre</dt>
+                        <dd class="col-sm-10">@_personaModel?.Nombre</dd>
+
+                        <dt class="col-sm-2">Teléfono</dt>
+                        <dd class="col-sm-10">@_personaModel?.Telefono</dd>
+
+                    </dl>
+                    <div>
+                        <button class="link-button" @onclick="() => viewFormEditRegistro(_personaModel?.Id)"><i class="fa-solid fa-pen"></i></button>
+                        <button class="link-button" @onclick="() => viewCloseFormRegistro()"><i class="fa-solid fa-circle-xmark"></i></button>
+                    </div>
+                }
+            </div>
+        }
+        else if (estadoForm == PersonaEstado.New || estadoForm == PersonaEstado.Edit)
+        {
+            <div class="row">
+
+                @if (estadoForm == PersonaEstado.New)
+                {
+                    <h2>Registrando una persona</h2>
+                }
+                else
+                {
+                    <h2>Editando la persona</h2>
+                }
+
+                <div class="col-md-4">
+                    <EditForm method="post" Model="_personaModel" OnValidSubmit="newOrEditPersona" FormName="newOrEdit" Enhance>
+
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" role="alert" />
+
+                        <div class="mb-3">
+                            <label for="id" class="form-label">Id:</label>
+                            <InputNumber id="id" @bind-Value="_personaModel.Id" class="form-control" aria-required="true" />
+                            <ValidationMessage For="() => _personaModel.Id" class="text-danger" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre:</label>
+                            <InputText id="nombre" @bind-Value="_personaModel.Nombre" class="form-control" />
+                            <ValidationMessage For="() => _personaModel.Nombre" class="text-danger" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="dni" class="form-label">DNI:</label>
+                            <InputText id="dni" @bind-Value="_personaModel.DNI" class="form-control" />
+                            <ValidationMessage For="() => _personaModel.DNI" class="text-danger" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="dni" class="form-label">Telefono:</label>
+                            <InputText id="dni" @bind-Value="_personaModel.Telefono" class="form-control" />
+                            <ValidationMessage For="() => _personaModel.Telefono" class="text-danger" />
+                        </div>
+                        <div>
+                            @if (estadoForm == PersonaEstado.New)
+                            {
+                                <button type="submit" class="btn btn-primary">Registrar Persona</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-primary">Actualizar Persona</button>
+                            }
+                            <button class="link-button" @onclick="() => viewCloseFormRegistro()"><i class="fa-solid fa-circle-xmark"></i></button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    @* botón nuevo registro *@
+    <div class="card p-2 m-2">
+        @if (estadoForm == PersonaEstado.None)
+        {
+            <div class="p-2 m-2">
+                <button class="link-button" @onclick="() => viewFormNewRegistro()"><i class="fa-solid fa-square-plus"></i> Nuevo registro</button>
+            </div>
+        }
+    </div>
+
+    @* listado *@
+    <div class="card">
+        @if (_personasModel == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in _personasModel)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.DNI</td>
+                            <td>@item.Nombre</td>
+                            <td>
+                                <button class="link-button" @onclick="() => viewFormEditRegistro(item.Id)"><i class="fa-solid fa-pen"></i></button>
+                                <button class="link-button" @onclick="() => viewFormDetailRegistro(item.Id)"><i class="fa-solid fa-expand"></i></button>|
+                                <button class="link-button" @onclick="() => eliminar(item.Id)"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+@code {
+    bool hasError = false;
+    string error = string.Empty;
+
+    List<PersonaModel> _personasModel = new();
+
+    [SupplyParameterFromForm]
+    private PersonaModel? _personaModel { get; set; } = new();
+
+    private PersonaEstado estadoForm = PersonaEstado.None;
+
+    async protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _personasModel = await _personasService.GetAll();
+
+            StateHasChanged();//actualiza la vista después de cargar los datos
+        }
+    }
+
+    async protected Task viewFormNewRegistro()
+    {
+        hasError = false;
+
+        estadoForm = PersonaEstado.New;
+        _personaModel = new();
+    }
+
+    async protected Task viewFormEditRegistro(int? id)
+    {
+        hasError = false;
+
+        try
+        {
+            estadoForm = PersonaEstado.Edit;
+            PersonaModel _personaModel = await _personasService.GetOneAsync(id ?? 0);
+
+            _personaModel = new PersonaModel
+            {
+                Id = _personaModel?.Id ?? 0,
+                Nombre = _personaModel?.Nombre ?? string.Empty,
+                DNI = _personaModel?.DNI ?? string.Empty,
+                Telefono = _personaModel?.Telefono ?? string.Empty
+            };
+        }
+        catch (Exception e)
+        {
+            hasError = true;
+            error = e.Message;
+        }
+
+        StateHasChanged();
+    }
+
+    async protected Task viewCloseFormRegistro()
+    {
+        hasError = false;
+        estadoForm = PersonaEstado.None;
+        _personaModel = new();
+        StateHasChanged();
+    }
+
+    async protected Task viewFormDetailRegistro(int? id)
+    {
+        hasError = false;
+
+        try
+        {
+            estadoForm = PersonaEstado.View;
+            var _personaModel = await _personasService.GetOneAsync(id ?? 0);
+
+            _personaModel = new PersonaModel
+            {
+                Id = _personaModel?.Id ?? 0,
+                Nombre = _personaModel?.Nombre ?? string.Empty,
+                DNI = _personaModel?.DNI ?? string.Empty,
+                Telefono = _personaModel?.Telefono ?? string.Empty
+            };
+        }
+        catch (Exception e)
+        {
+            hasError = true;
+            error = e.Message;
+        }
+        StateHasChanged();
+    }
+
+    async private Task newOrEditPersona()
+    {
+        hasError = false;
+
+        if (estadoForm == PersonaEstado.New)
+        {
+            await newPersona();
+        }
+        else if (estadoForm == PersonaEstado.Edit)
+        {
+            await editPersona();
+        }
+        estadoForm = PersonaEstado.None;
+        _personaModel = new();
+    }
+
+    async private Task newPersona()
+    {
+        try
+        {
+            _personaModel.Activo = true;
+            await _personasService.InsertAsync(_personaModel);
+            _personasModel = await _personasService.GetListByActivoAsync(true);
+
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            hasError = true;
+            error = e.Message;
+        }
+    }
+
+    private async Task editPersona()
+    {
+        try
+        {
+            await _personasService.UpdateAsync(_personaModel);
+
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            hasError = true;
+            error = e.Message;
+        }
+    }
+
+    async private Task eliminar(int? id)
+    {
+        try
+        {
+            await _personasService.DeleteAsync(id ?? 0);
+            _personasModel = await _personasService.GetListByActivoAsync(true);
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            hasError = true;
+            error = e.Message;
+        }
+    }
+
+
+    enum PersonaEstado { None, Edit, View, New };
+}

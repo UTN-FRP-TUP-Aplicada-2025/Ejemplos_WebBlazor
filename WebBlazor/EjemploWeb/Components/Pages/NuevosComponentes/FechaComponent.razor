@@ -1,0 +1,127 @@
+﻿<div class="form-group">
+    <div class="row">
+        <div class="col-lg-4">
+            <InputNumber class="form-control"
+                         @bind-Value="_fecha.Dia"
+                         @bind-Value:after="OnFieldChanged"
+                         placeholder="Día"></InputNumber>
+        </div>
+        <div class="col-lg-4">
+            <InputNumber class="form-control"
+                         @bind-Value="_fecha.Mes"
+                         @bind-Value:after="OnFieldChanged"
+                         placeholder="Mes"></InputNumber>
+        </div>
+        <div class="col-lg-4">
+            <InputNumber class="form-control"
+                         @bind-Value="_fecha.Año"
+                         @bind-Value:after="OnFieldChanged"
+                         placeholder="Año"></InputNumber>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private FechaViewModel _fecha = new FechaViewModel();
+
+    [Parameter]
+    public DateTime? Date { get; set; }
+
+    [Parameter]
+    public EventCallback<DateTime?> DateChanged { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Date != _previousDate)
+        {
+            _fecha = new FechaViewModel(Date);
+            _previousDate = Date;
+        }
+    }
+
+    private DateTime? _previousDate;
+
+ 
+    private async Task OnFieldChanged()
+    {
+        var newDate = GetDateFromFields();
+        if (newDate != Date)
+        {
+            Date = newDate;
+            await DateChanged.InvokeAsync(Date);
+        }
+    }
+
+    private DateTime? GetDateFromFields()
+    {
+        try
+        {
+            if (_fecha.Año.HasValue && _fecha.Mes.HasValue && _fecha.Dia.HasValue)
+            {
+                return new DateTime(_fecha.Año.Value, _fecha.Mes.Value, _fecha.Dia.Value);
+            }
+            return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public class FechaViewModel
+    {
+        private int? _dia;
+        private int? _mes;
+        private int? _año;
+
+        public int? Dia
+        {
+            get => _dia;
+            set
+            {
+                _dia = value;
+            }
+        }
+
+        public int? Mes
+        {
+            get => _mes;
+            set
+            {
+                _mes = value;
+                if (value.HasValue && (value < 1 || value > 12))
+                    _mes = null;
+            }
+        }
+
+        public int? Año
+        {
+            get => _año;
+            set
+            {
+                _año = value;
+                if (value.HasValue && (value < 1900 || value > 2100))
+                    _año = null;
+            }
+        }
+
+        public FechaViewModel() { }
+
+        public FechaViewModel(DateTime? fecha)
+        {
+            if (fecha.HasValue)
+            {
+                Dia = fecha.Value.Day;
+                Mes = fecha.Value.Month;
+                Año = fecha.Value.Year;
+            }
+            else
+            {
+                Dia = null;
+                Mes = null;
+                Año = null;
+            }
+        }
+    }
+}

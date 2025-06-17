@@ -1,0 +1,56 @@
+﻿@page "/formulario-fecha"
+@using System.ComponentModel.DataAnnotations
+
+
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+
+<div class="container">
+
+    <h3>Formulario Simple</h3>
+
+    <div class="card p-2 col-8">
+        <EditForm Model="@_ModelView" OnValidSubmit="OnSubmit" FormName="etapa1">
+
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label" for="campo1">Campo 1 (texto)</label>
+                <InputText id="campo1" class="form-control" @bind-Value="_ModelView.Campo1" />
+                <ValidationMessage For="@(() => _ModelView.Campo1)" style="color:indianred" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="campo1">Campo 2 (Fecha)</label>
+                <InputDate id="campo2" class="form-control" @bind-Value="_ModelView.Campo2" />
+                <ValidationMessage For="@(() => _ModelView.Campo2)" style="color:indianred" />
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code
+{
+    FormularioFechaModelView _ModelView = new();
+
+    public void OnSubmit()
+    {
+
+    }
+
+    class FormularioFechaModelView
+    {
+        [Required(ErrorMessage = "El campo de texto es obligatorio.")]
+        public string Campo1 { get; set; }
+
+        [Required(ErrorMessage = "Seleccione una opción.")]
+        public DateTime? Campo2 { get; set; }
+    }
+}

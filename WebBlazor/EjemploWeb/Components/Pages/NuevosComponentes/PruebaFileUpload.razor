@@ -1,0 +1,25 @@
+﻿@page "/prueba-fileupload"
+
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h3>PruebaEjemplo</h3>
+
+<div class="card">
+
+    <FileUploadComponent @ref="_fileUpload" FilePath="./Upload"></FileUploadComponent>
+
+    <button @onclick="Subir">Enviar</button>
+
+</div>
+
+@code {
+    FileUploadComponent _fileUpload;
+
+    async Task Subir()
+    {
+        await _fileUpload.UploadFiles();
+    }
+   
+}

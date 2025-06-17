@@ -1,0 +1,55 @@
+﻿@page "/prueba"
+
+<h3>Prueba</h3>
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+
+<FechaComponent @bind-Date="fecha" @bind-Date:after="onChange"></FechaComponent>
+
+<div class="mt-3">
+    <button class="btn btn-primary" @onclick="SetHoy">Establecer Hoy</button>
+    <button class="btn btn-secondary" @onclick="SetNavidad">Establecer Navidad</button>
+    <button class="btn btn-warning" @onclick="Limpiar">Limpiar</button>
+</div>
+
+
+<div class="mt-3">
+    <strong>Fecha actual: </strong>
+    @if (fecha.HasValue)
+    {
+        <span>@fecha.Value.ToString("dd/MM/yyyy")</span>
+    }
+    else
+    {
+        <span class="text-muted">Sin fecha</span>
+    }
+</div>
+
+<div>@fecha</div>
+
+@code
+{
+    DateTime? fecha = DateTime.Now;
+
+    private void SetHoy()
+    {
+        fecha = DateTime.Now;
+    }
+
+    private void SetNavidad()
+    {
+        fecha = new DateTime(DateTime.Now.Year, 12, 25);
+    }
+
+    private void Limpiar()
+    {
+        fecha = null;
+    }
+
+    public void onChange()
+    {
+        Console.WriteLine($"Fecha cambiada a: {fecha?.ToString("dd/MM/yyyy") ?? "Ninguna"}");
+    }
+}

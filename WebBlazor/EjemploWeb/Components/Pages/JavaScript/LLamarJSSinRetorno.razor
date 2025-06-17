@@ -1,0 +1,19 @@
+﻿@page "/llamar-js-sin-retorno"
+
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+
+<h3>Mostrar mensaje</h3>
+
+<button @onclick="MostrarMensaje">Mostrar mensaje JS</button>
+
+@code {
+    [Inject] IJSRuntime JS { get; set; }
+
+    private async Task MostrarMensaje()
+    {
+        await JS.InvokeVoidAsync("mostrarAlerta", "¡Hola desde Blazor!");
+    }
+}

@@ -1,0 +1,19 @@
+﻿@page "/llamar-js-con-retorno"
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<button @onclick="ObtenerHora">Obtener hora</button>
+
+<p>Hora: @hora</p>
+
+@code {
+    [Inject] IJSRuntime JS { get; set; }
+
+    private string hora;
+
+    private async Task ObtenerHora()
+    {
+        hora = await JS.InvokeAsync<string>("obtenerHoraActual");
+    }
+}

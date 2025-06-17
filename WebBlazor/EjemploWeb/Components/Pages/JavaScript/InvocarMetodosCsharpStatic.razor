@@ -1,0 +1,27 @@
+﻿@page "/invocar-metodo-csharp-static"
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<button @onclick="LlamarDesdeJS">Llamar método desde JS</button>
+
+<p>@mensaje</p>
+
+@code {
+    [Inject] IJSRuntime JS { get; set; }
+
+    private string mensaje;
+
+    //tiene que ser static 
+    [JSInvokable]
+    public static Task MostrarMensajeDesdeJS(string texto)
+    {
+        Console.WriteLine( "JS dijo: " + texto);
+        return Task.CompletedTask;
+    }
+
+    private async Task LlamarDesdeJS()
+    {
+        await JS.InvokeVoidAsync("llamarMetodoCSharp");
+    }
+}
