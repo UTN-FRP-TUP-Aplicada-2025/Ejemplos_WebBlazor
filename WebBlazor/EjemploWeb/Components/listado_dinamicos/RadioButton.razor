@@ -15,7 +15,7 @@
         <div class="form-group">
             <h5>Seleccion el costo a abonar</h5>
 
-            <InputRadioGroup class="mb-3" @bind-Value="_EjemploModelView.IdTipo" @bind-Value:after="OnTipoSelect">
+            <InputRadioGroup class="mb-3" @bind-Value="_EjemploModelView.IdTipo" @bind-Value:after="OnTipoChanged">
                 @foreach (var opcion in _TiposModelView)
                 {
                     <div class="form-check">
@@ -84,7 +84,7 @@
         Seleccion = _EjemploModelView.TipoDescripcion;
     }
 
-    void OnTipoSelect()
+    void OnTipoChanged()
     {
         var itemSeleccionado = _TiposModelView.FirstOrDefault(r => r.Id == _EjemploModelView.IdTipo);
         _EjemploModelView.TipoDescripcion = itemSeleccionado?.Descripcion ?? "";
