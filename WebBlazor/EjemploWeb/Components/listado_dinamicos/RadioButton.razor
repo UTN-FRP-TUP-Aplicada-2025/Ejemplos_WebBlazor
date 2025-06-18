@@ -1,27 +1,36 @@
-﻿@page "/select"
+﻿@page "/radiobutton-dinamico"
 
-<h3>Select</h3>
+<h3>RadioButton</h3>
 
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 
 
 <div>
-    <EditForm Model="@_EjemploModelView" @OnValidSubmit="onEnviar">
+    <EditForm Model="@_EjemploModelView" OnValidSubmit="onEnviar" FormName="etapa1">
 
         <DataAnnotationsValidator />
         <ValidationSummary />
 
         <div class="form-group">
-            <InputSelect @bind-Value="_EjemploModelView.IdTipo" class="form-select" @bind-Value:after="OnTipoSelect">
+            <h5>Seleccion el costo a abonar</h5>
 
-                <option value="0">Seleccione un tipo!</option>
-
+            <InputRadioGroup class="mb-3" @bind-Value="_EjemploModelView.IdTipo" @bind-Value:after="OnTipoSelect">
                 @foreach (var opcion in _TiposModelView)
                 {
-                    <option value="@opcion.Id">@opcion.Descripcion??"Sin descripción"</option>
+                    <div class="form-check">
+                        <InputRadio Id="@($"radio-{opcion.Id}")" class="form-check-input" Value=@opcion.Id />
+
+                        <label class="form-check-label" for="@($"radio-{opcion.Id}")">
+                            <div class="d-flex flex-column">
+                                <span>@opcion.Descripcion</span>
+                                <span class="text-muted" style="text-align: left;">@opcion.Costo?.ToString("C2")</span>
+                            </div>
+                        </label>
+                    </div>
                 }
-            </InputSelect>
+            </InputRadioGroup>
+
         </div>
 
         <button type="submit">Enviar</button>
@@ -44,15 +53,18 @@
     {
         if (!_datosInicializados)
         {
+
+            _datosInicializados = true;
+
             _TiposModelView = new List<TipoModelView>
             {
                    new TipoModelView
                    {
-                        Id=1, Descripcion="Opción 1"
+                        Id=1, Descripcion="Opción 1", Costo=100.0
                    } ,
                    new TipoModelView
                    {
-                        Id=2, Descripcion="Opción 2"
+                        Id=2, Descripcion="Opción 2", Costo=100.0
                    }
             };
             StateHasChanged();
@@ -63,24 +75,19 @@
     {
         if (firstRender)
         {
-
+            
         }
     }
 
     public void onEnviar()
     {
-        
         Seleccion = _EjemploModelView.TipoDescripcion;
-
     }
 
     void OnTipoSelect()
     {
-        var rubroSeleccionado = _TiposModelView.FirstOrDefault(r => r.Id == _EjemploModelView.IdTipo);
-        if (rubroSeleccionado != null)
-        {
-            _EjemploModelView.TipoDescripcion = rubroSeleccionado?.Descripcion ?? "";
-        }
+        var itemSeleccionado = _TiposModelView.FirstOrDefault(r => r.Id == _EjemploModelView.IdTipo);
+        _EjemploModelView.TipoDescripcion = itemSeleccionado?.Descripcion ?? "";
     }
 
     class EjemploModelView
@@ -93,5 +100,6 @@
     {
         public int Id { get; set; }
         public string? Descripcion { get; set; }
+        public double? Costo { get; set; }
     }
 }
