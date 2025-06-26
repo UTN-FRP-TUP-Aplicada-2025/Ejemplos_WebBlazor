@@ -56,12 +56,12 @@
     private UsuarioModel usuarioModel { get; set; } = new();
 
     [Inject] UsuariosService _usuarioService { get; set; }
-    [Inject] IHttpContextAccessor HttpContextAccessor { get; set; }
+    [Inject] IHttpContextAccessor _HttpContextAccessor { get; set; }
     [Inject] Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var httpContext = HttpContextAccessor.HttpContext;
+        var httpContext = _HttpContextAccessor.HttpContext;
         if (httpContext != null)
         {
             var ssoToken = httpContext.Request.Query["sso_token"];
@@ -109,7 +109,7 @@
                 var identity = new ClaimsIdentity(claims, "Cookies");
                 var cookiePrincipal = new ClaimsPrincipal(identity);
 
-                var httpContext = HttpContextAccessor.HttpContext;
+                var httpContext = _HttpContextAccessor.HttpContext;
                 if (httpContext != null)
                 {
                     await httpContext.SignInAsync("Cookies", cookiePrincipal);
@@ -148,7 +148,7 @@
         var principal = new ClaimsPrincipal(identity);
         #endregion
 
-        var httpContext = HttpContextAccessor.HttpContext;
+        var httpContext = _HttpContextAccessor.HttpContext;
         if (httpContext != null)
         {
             await httpContext.SignInAsync("Cookies", principal);
