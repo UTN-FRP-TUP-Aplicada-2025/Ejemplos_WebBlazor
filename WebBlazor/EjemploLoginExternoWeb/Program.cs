@@ -61,7 +61,7 @@ public class Program
         builder.Services.AddHttpContextAccessor();
         #endregion
 
-        #region despues de las cookies de autenticación
+        #region autentificación externar - despues de las cookies de autenticación
         builder.Services.AddAuthentication()
             .AddJwtBearer("JWT", options =>
             {
@@ -73,8 +73,7 @@ public class Program
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = "App2", // Identificador de la aplicación origen
                     ValidAudience = "App1", // Identificador de la aplicación destino
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes("tu-clave-secreta-muy-segura-de-al-menos-32-caracteres"))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("tu-clave-secreta-muy-segura-de-al-menos-32-caracteres"))
                 };
             });
         #endregion

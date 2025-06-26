@@ -61,7 +61,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Verificar si hay un token SSO en la query string
         var httpContext = HttpContextAccessor.HttpContext;
         if (httpContext != null)
         {
