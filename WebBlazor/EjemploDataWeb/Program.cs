@@ -9,9 +9,7 @@ using EjemploData.Common.MMS;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 #region entidades de datos y negocio
 builder.Services.AddSingleton<SqlConnection>(sp =>
@@ -66,8 +64,6 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
-
-
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 

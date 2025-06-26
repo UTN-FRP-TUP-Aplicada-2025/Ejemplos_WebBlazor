@@ -6,10 +6,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Logging.AddDebug();
+}
+
 
 #region entidades
 builder.Services.AddSingleton<EjemploWeb.Services.PersonasService>();
 #endregion
+
 
 var app = builder.Build();
 

@@ -1,0 +1,63 @@
+﻿@page "/redirect"
+@using System.Security.Claims
+@using EjemploLoginOrigenWeb.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject JwtTokenService JwtTokenService
+
+<h3>Redirect</h3>
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<div class="card">
+   @*  @if (isAuthenticated)
+    { *@
+        <p>Usuario autenticado: @currentUser</p>
+        <button @onclick="OnRedirect" class="btn btn-primary">Redireccionar con SSO</button>
+    @* }
+    else
+    { *@
+        <p>Debes estar autenticado para usar SSO</p>
+        <button @onclick="OnDirectRedirect" class="btn btn-secondary">Redireccionar sin SSO</button>
+   @*  } *@
+</div>
+
+@code {
+    private bool isAuthenticated = true;
+    private string currentUser = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isAuthenticated = authState.User.Identity.IsAuthenticated;
+        if (isAuthenticated)
+        {
+            currentUser = authState.User.Identity.Name;
+        }
+    }
+
+    private void OnRedirect()
+    {
+        //  if (isAuthenticated)
+        // {
+        // Generar token SSO
+        var additionalClaims = new Dictionary<string, string>
+            {
+                { "SourceApp", "App2" },
+                { "RedirectTime", DateTime.UtcNow.ToString() }
+            };
+        currentUser = "admin";
+        var ssoToken = JwtTokenService.GenerateToken(currentUser, additionalClaims);
+
+            // Construir URL con token
+            var targetUrl = $"https://zg030qg3-7208.brs.devtunnels.ms/login?sso_token={ssoToken}&returnurl=%2Fpersonas";
+
+            Navigation.NavigateTo(targetUrl, true);
+      //  }
+    }
+
+    private void OnDirectRedirect()
+    {
+        Navigation.NavigateTo("https://zg030qg3-7208.brs.devtunnels.ms/login?returnurl=%2Fpersonas", true);
+    }
+}
