@@ -1,6 +1,8 @@
 ﻿@page "/redirect"
+
+
 @using System.Security.Claims
-@using EjemploLoginOrigenWeb.Services
+@using EjemploOrigenRedirectWeb.Services
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject JwtTokenService JwtTokenService
@@ -50,7 +52,7 @@
         var ssoToken = JwtTokenService.GenerateToken(currentUser, additionalClaims);
 
             // Construir URL con token
-            var targetUrl = $"https://zg030qg3-7208.brs.devtunnels.ms/login?sso_token={ssoToken}&returnurl=%2Fpersonas";
+        var targetUrl = $"https://zg030qg3-7208.brs.devtunnels.ms/login?sso_token={ssoToken}&returnurl=%2Fpersonas";
 
             Navigation.NavigateTo(targetUrl, true);
       //  }

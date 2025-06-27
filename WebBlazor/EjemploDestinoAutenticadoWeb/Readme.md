@@ -32,8 +32,8 @@ En Login.razor se agrega  lo siguiente;
 [Inject] IHttpContextAccessor HttpContextAccessor { get; set; }
 ```
 
-y estos dos metodos
-```
+y estos dos métodos
+```csharp
 protected override async Task OnInitializedAsync()
     {
         var httpContext = HttpContextAccessor.HttpContext;

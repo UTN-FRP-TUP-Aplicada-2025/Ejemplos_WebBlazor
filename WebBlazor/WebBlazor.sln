@@ -38,9 +38,11 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "EjemplosDataBase", "Ejemplo
 		SlnRelativePath = "EjemplosDataBase\"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EjemploLoginExternoWeb", "EjemploLoginExternoWeb\EjemploLoginExternoWeb.csproj", "{F8C74AC4-4DF7-48E3-914F-941C46C728A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EjemploDestinoAutenticadoWeb", "EjemploDestinoAutenticadoWeb\EjemploDestinoAutenticadoWeb.csproj", "{F8C74AC4-4DF7-48E3-914F-941C46C728A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EjemploLoginOrigenWeb", "EjemploLoginOrigenWeb\EjemploLoginOrigenWeb.csproj", "{12173C92-1AB8-4261-A7E6-7265A1E51551}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EjemploOrigenRedirectWeb", "EjemploOrigenRedirectWeb\EjemploOrigenRedirectWeb.csproj", "{12173C92-1AB8-4261-A7E6-7265A1E51551}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "relogueo_entre_sistemas", "relogueo_entre_sistemas", "{D2079FAF-607D-4F1F-8D1B-6169587393EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,8 +88,8 @@ Global
 		{3A27BAE0-B5B0-49D1-BA0B-A108E975F81F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A712994A-65AA-472D-9A45-1D953AB9EABB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{CAEAB50C-A87F-73A2-A190-36E252F9A5F7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{F8C74AC4-4DF7-48E3-914F-941C46C728A8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{12173C92-1AB8-4261-A7E6-7265A1E51551} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F8C74AC4-4DF7-48E3-914F-941C46C728A8} = {D2079FAF-607D-4F1F-8D1B-6169587393EF}
+		{12173C92-1AB8-4261-A7E6-7265A1E51551} = {D2079FAF-607D-4F1F-8D1B-6169587393EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21F1F800-1387-4564-8F76-FFAA0C267D54}
