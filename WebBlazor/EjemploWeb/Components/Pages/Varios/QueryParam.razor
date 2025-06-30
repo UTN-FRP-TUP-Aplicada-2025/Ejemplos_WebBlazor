@@ -1,0 +1,10 @@
+﻿@page "/queryparam"
+
+<h3>QueryParam</h3>
+
+@Nombre
+
+@code {
+    [SupplyParameterFromQueryAttribute]
+    string? Nombre { get; set; }
+}
