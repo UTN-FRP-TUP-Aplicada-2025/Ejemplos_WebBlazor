@@ -1,0 +1,33 @@
+﻿@page "/eval"
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h3>Ref</h3>
+
+@inject IJSRuntime JS
+
+@* <input type="text"  name="inputFoto" id="inputFoto" @ref="inputFotoRef"/> *@
+
+<input type="text"  name="inputFoto" id="inputFoto" /> 
+
+<button @onclick="OnMostrar" >Mostrar</button>
+    
+@mostrar
+
+@code {
+    string mostrar = "";
+   // private ElementReference inputFotoRef;
+
+    //ejecutando esto directamente desde la consola del navegador el binding falla.
+    //document.getElementById('inputFoto').value='R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+
+    private async Task OnMostrar()
+    {
+        //S.InvokeAsync<string>("eval", "", inputFotoRef)
+
+        // mostrar = await JS.InvokeAsync<string>("eval", "arguments[0].value", inputFotoRef);
+
+        mostrar = await JS.InvokeAsync<string>("eval", "document.getElementById('inputFoto').value");
+    }
+}

@@ -1,4 +1,5 @@
 using EjemploWeb.Components;
+using Microsoft.AspNetCore.Components.Server;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,21 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddSingleton<EjemploWeb.Services.PersonasService>();
 #endregion
 
+#region 
+//Límite de mensaje SignalR: Por defecto, SignalR tiene límites de tamaño de mensaje
+//Timeout de JSInterop: Las llamadas JavaScript tienen timeouts configurados
+//Buffer del WebSocket: El WebSocket puede saturarse con datos grandes
+builder.Services.AddSignalR(options =>
+{
+    options.MaximumReceiveMessageSize = 1024 * 1024; // 1MB
+    options.StreamBufferCapacity = 50;
+});
+
+builder.Services.Configure<CircuitOptions>(options =>
+{
+    options.JSInteropDefaultCallTimeout = TimeSpan.FromMinutes(5);
+});
+#endregion
 
 var app = builder.Build();
 
