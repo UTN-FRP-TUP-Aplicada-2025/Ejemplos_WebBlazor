@@ -1,4 +1,5 @@
 ﻿@page "/prueba-fileupload"
+@using Ejemplos.Components
 
 
 @rendermode InteractiveServer
@@ -12,13 +13,26 @@
 
     <button @onclick="Subir">Enviar</button>
 
+    @foreach (string nombre in archivos)
+    {
+        <div>@nombre</div>
+    }
+
+
 </div>
 
 @code {
     FileUploadComponent _fileUpload;
+    List<string> archivos = new List<string>();
 
     async Task Subir()
     {
+        foreach(var file in _fileUpload.selectedFiles)
+        {
+            archivos.Add(file.Name);
+        }
+
+
         await _fileUpload.UploadFiles();
     }
    

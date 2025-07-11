@@ -1,0 +1,32 @@
+﻿@typeparam TItem
+@namespace Ejemplos.Components
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div>Mostrando @((PaginaActual - 1) * ItemsPorPagina + 1) - @(Math.Min(PaginaActual * ItemsPorPagina, TotalItems)) de @TotalItems</div>
+    <div>
+        <button class="btn btn-sm btn-outline-primary me-2" @onclick="PaginaAnterior" disabled="@(!PuedeRetroceder)">Anterior</button>
+        <button class="btn btn-sm btn-outline-primary" @onclick="PaginaSiguiente" disabled="@(!PuedeAvanzar)">Siguiente</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int TotalItems { get; set; }
+    [Parameter] public int ItemsPorPagina { get; set; } = 10;
+    [Parameter] public int PaginaActual { get; set; } = 1;
+    [Parameter] public EventCallback<int> OnCambioDeTamanioPagina { get; set; }
+
+    private bool PuedeAvanzar => PaginaActual * ItemsPorPagina < TotalItems;
+    private bool PuedeRetroceder => PaginaActual > 1;
+
+    private async Task PaginaAnterior()
+    {
+        if (PuedeRetroceder)
+            await OnCambioDeTamanioPagina.InvokeAsync(PaginaActual - 1);
+    }
+
+    private async Task PaginaSiguiente()
+    {
+        if (PuedeAvanzar)
+            await OnCambioDeTamanioPagina.InvokeAsync(PaginaActual + 1);
+    }
+}

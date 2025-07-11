@@ -1,10 +1,10 @@
-﻿@page "/prueba"
+﻿@page "/prueba-fecha"
+@using Ejemplos.Components
 
 <h3>Prueba</h3>
 
 @rendermode InteractiveServer
 @attribute [StreamRendering]
-
 
 <FechaComponent @bind-Date="fecha" @bind-Date:after="onChange"></FechaComponent>
 

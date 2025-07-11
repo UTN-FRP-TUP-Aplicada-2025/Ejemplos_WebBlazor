@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Components
+@namespace Ejemplos.Components
+
+<div class="d-flex align-items-center justify-content-center">
+    <div class="dataTables_length" id="DataTables_Table_0_length">
+    <label class="d-flex align-items-center mb-0">
+        <span class="me-2"> Filtrar: </span>
+        <select class="form-control form-control-sm me-2" @onchange="CambiarFiltro" style="width: auto;">
+            <option value="activos">Activos</option>
+            <option value="todos">Todos</option>
+            <option value="inactivos">Inactivos</option>
+        </select>
+    </label>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnFiltroCambiado { get; set; }
+
+    private async Task CambiarFiltro(ChangeEventArgs e)
+    {
+        string valorSeleccionado = e.Value?.ToString() ?? "activos";
+        await OnFiltroCambiado.InvokeAsync(valorSeleccionado);
+    }
+}

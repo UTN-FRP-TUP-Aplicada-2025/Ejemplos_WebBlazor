@@ -1,11 +1,13 @@
-﻿@using Microsoft.AspNetCore.Components.Forms
+﻿
+@using Microsoft.AspNetCore.Components.Forms
+
+@namespace Ejemplos.Components
 
 @attribute [StreamRendering]
 
 <div class="col">
     <div class="row">
-        <InputFile key="@inputFileKey" OnChange="HandleFilesSelection"
-                   multiple class="form-control" MaxAllowedSize="1000485760" />
+        <InputFile key="@inputFileKey" OnChange="HandleFilesSelection" multiple class="form-control" MaxAllowedSize="1000485760" />
     </div>
     @if (selectedFiles.Count > 0)
     {
@@ -113,7 +115,7 @@
             }
 
             message = $"Se han subido {selectedFiles.Count} archivos correctamente.";
-            selectedFiles.Clear();
+            
             inputFileKey++;
         }
         catch (Exception ex)

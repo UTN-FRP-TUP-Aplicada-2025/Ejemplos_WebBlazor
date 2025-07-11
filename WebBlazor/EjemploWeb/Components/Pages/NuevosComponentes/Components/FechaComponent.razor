@@ -1,22 +1,15 @@
-﻿<div class="form-group">
+﻿@namespace Ejemplos.Components
+
+<div class="form-group">
     <div class="row">
         <div class="col-lg-4">
-            <InputNumber class="form-control"
-                         @bind-Value="_fecha.Dia"
-                         @bind-Value:after="OnFieldChanged"
-                         placeholder="Día"></InputNumber>
+            <InputNumber class="form-control" @bind-Value="_fecha.Dia" @bind-Value:after="OnFieldChanged" placeholder="Día"></InputNumber>
         </div>
         <div class="col-lg-4">
-            <InputNumber class="form-control"
-                         @bind-Value="_fecha.Mes"
-                         @bind-Value:after="OnFieldChanged"
-                         placeholder="Mes"></InputNumber>
+            <InputNumber class="form-control" @bind-Value="_fecha.Mes" @bind-Value:after="OnFieldChanged" placeholder="Mes"></InputNumber>
         </div>
         <div class="col-lg-4">
-            <InputNumber class="form-control"
-                         @bind-Value="_fecha.Año"
-                         @bind-Value:after="OnFieldChanged"
-                         placeholder="Año"></InputNumber>
+            <InputNumber class="form-control" @bind-Value="_fecha.Año" @bind-Value:after="OnFieldChanged" placeholder="Año"></InputNumber>
         </div>
     </div>
 </div>
@@ -41,8 +34,7 @@
     }
 
     private DateTime? _previousDate;
-
- 
+     
     private async Task OnFieldChanged()
     {
         var newDate = GetDateFromFields();
