@@ -40,14 +40,14 @@
         </tbody>
     </table>
 
-    <PaginacionComponent TItem="Persona" TotalItems="@_personas.Count" ItemsPorPagina="@itemsPorPagina" PaginaActual="@paginaActual" OnCambioDeTamanioPagina="CambiarPagina" />
+    <PaginacionComponent TotalItems="@_personas.Count" ItemsPorPagina="@itemsPorPagina" PaginaActual="@paginaActual" OnCambioDeTamanioPagina="OnCambioDeTamanioPagina" />
 </div>
 
 @code {
     int itemsPorPagina = 2;
     int paginaActual = 1;
 
-    private void CambiarPagina(int nuevaPagina)
+    private void OnCambioDeTamanioPagina(int nuevaPagina)
     {
         paginaActual = nuevaPagina;
     }

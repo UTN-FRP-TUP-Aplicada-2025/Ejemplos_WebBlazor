@@ -6,10 +6,30 @@
 <h3>QueryParam</h3>
 
 
-
 @Nombre
 
 @code {
     [SupplyParameterFromQueryAttribute]
     string? Nombre { get; set; }
+
+    [SupplyParameterFromQueryAttribute]
+    int? Id { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Console.WriteLine($"---> ");
+        //	Solo una vez al inicio de la conexión interactiva.
+        Console.WriteLine($"---> Nombre: {Nombre}, Id: {Id}");
+
+        return base.OnInitializedAsync();
+    }
+
+
+    protected override Task OnParametersSetAsync()
+    {
+        //Cada vez que se cambian los parámetros por navegación.
+        //Console.WriteLine($"---> Nombre: {Nombre}, Id: {Id}");
+        return Task.CompletedTask;
+    }
+
 }

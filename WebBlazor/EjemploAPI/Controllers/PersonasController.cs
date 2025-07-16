@@ -19,6 +19,13 @@ public class PersonasController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
+        List<PersonaDTO> personas = _servicio.GetAll();
+        if(personas.Count>=0)
+            return Ok(personas);
+        else
+            return NotFound("No hay personas registradas");
+
+
         return Ok(_servicio.GetAll());
     }
 
