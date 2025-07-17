@@ -1,6 +1,6 @@
 namespace EjemploWeb.Components.Pages.Controles
 {
-    public partial class Vista
+    public partial class Listado
     {
         List<ItemViewModel> ListaItems = new List<ItemViewModel>() {
             new ItemViewModel{Nombre="fernando"},

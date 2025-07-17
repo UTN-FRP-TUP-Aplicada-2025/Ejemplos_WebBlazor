@@ -1,0 +1,24 @@
+﻿@page "/onclick"
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h3>OnClick</h3>
+
+<a href="javascript:void(0);" @onclick="OnClick" class="btn btn-primary">Cambiar</a>
+
+<button @onclick="OnClick" class="btn btn-primary">Actualizar Enlace</button>
+
+<div>@mensaje</div>
+
+@code {
+
+    string mensaje;
+
+
+    async Task OnClick()
+    {
+        mensaje = DateTime.Now.ToString();
+        //return Task.CompletedTask;
+    }
+}

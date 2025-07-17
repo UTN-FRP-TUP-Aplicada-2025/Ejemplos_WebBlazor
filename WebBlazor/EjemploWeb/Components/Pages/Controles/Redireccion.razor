@@ -1,0 +1,41 @@
+﻿@page "/redireccion"
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h3>Redireccion</h3>
+
+<li><a href="@url">Ir</a></li>
+
+<button @onclick="OnActualizar" class="btn btn-primary" target="_blank">Actualizar Enlace</button>
+
+<button @onclick="OnIr" class="btn btn-primary">Ir</button>
+
+@code {
+
+    string url;
+    [Inject] NavigationManager _NavigationManager { get; set; }
+
+
+    async Task OnActualizar()
+    {
+        url = "onclick";
+        StateHasChanged();
+        //return Task.CompletedTask;
+    }
+
+    async Task OnIr()
+    {
+        string url = "onclick";
+        try
+        {
+            url = "onclick";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al construir la URL: {ex.Message}");
+        }
+        _NavigationManager.NavigateTo(url);
+        
+    }
+}
