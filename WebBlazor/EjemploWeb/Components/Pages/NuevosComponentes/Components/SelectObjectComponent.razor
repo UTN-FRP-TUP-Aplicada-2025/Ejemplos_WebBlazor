@@ -1,0 +1,100 @@
+﻿@namespace Ejemplos.Components
+
+@using System.Globalization
+
+<div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="input-group m-b-0">
+            <InputText type="text" class="form-control" @bind-Value="searchText" @oninput="OnSearchInput" placeholder="Search..." />
+            <span class="input-group-addon"> <i class="zmdi zmdi-search"></i></span>
+        </div>
+    </div>
+</div>
+
+@code {
+    string searchText;
+
+    #region listado entrante
+    [Parameter]
+    public List<PersonaViewModel>? Personas { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<PersonaViewModel>?> PersonasChanged { get; set; }
+
+    private async Task NotifyPersonasChanged()
+    {
+        if (PersonasChanged.HasDelegate)
+        {
+            await PersonasChanged.InvokeAsync(Personas);
+        }
+    }
+    #endregion
+    async protected override Task OnInitializedAsync()
+    {
+        PersonasResult = Personas;
+        await NotifyPersonasResultChanged();
+    }
+
+    async protected override Task OnParametersSetAsync()
+    {
+    }
+
+    #region listado filtrado
+    [Parameter]
+    public List<PersonaViewModel>? PersonasResult { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<PersonaViewModel>?> PersonasResultChanged { get; set; }
+
+    private async Task NotifyPersonasResultChanged()
+    {
+        if (PersonasResultChanged.HasDelegate)
+        {
+            await PersonasResultChanged.InvokeAsync(PersonasResult);
+        }
+    }    
+    #endregion
+
+
+    #region filtrado
+    async Task OnSearchText()
+    {
+        PersonasResult = Personas?.Where(p => p.Nombre.Contains(searchText ?? "", StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    async Task OnSearchInput(ChangeEventArgs e)
+    {
+        string expresion = e.Value?.ToString() ?? "";
+
+
+        if (string.IsNullOrWhiteSpace(expresion))
+        {
+            PersonasResult?.Clear();
+            PersonasResult?.AddRange(Personas?.ToArray()??new PersonaViewModel[] { });
+        }
+        else
+        {
+            CompareInfo compareInfo = CultureInfo.InvariantCulture.CompareInfo;
+            CompareOptions options = CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreSymbols;
+
+            PersonasResult = Personas?
+                                    .Where(row => compareInfo.IndexOf(row.Nombre ?? "", expresion, options) >= 0)
+                                    .OrderByDescending(row => row.Dni)
+                                    .ThenBy(row => row.Nombre)
+                                    .ToList<PersonaViewModel>();
+
+            await NotifyPersonasResultChanged();
+        }
+
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+    #endregion
+
+    public class PersonaViewModel
+    {
+        public int Dni { get; set; }
+        public string Nombre { get; set; }
+    }
+}

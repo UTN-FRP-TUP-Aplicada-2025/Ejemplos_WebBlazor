@@ -14,4 +14,8 @@
     <Folder Include="wwwroot\Upload\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Components\Pages\NuevosComponentes\Paginacion\PruebaLista2Paginable.razor" />
+  </ItemGroup>
+
 </Project>

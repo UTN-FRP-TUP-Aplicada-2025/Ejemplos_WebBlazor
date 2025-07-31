@@ -1,0 +1,45 @@
+﻿@* @typeparam TItem *@
+@namespace Ejemplos.Components
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <div class="col-12">
+        <div class="row">
+            <ul class="pagination">
+            @for (int n = 1; n <= TotalPaginas;n++)
+            {
+                var pagina = n;
+                <li class="page-item">
+                    <button class="page-link"  @onclick="async () => await PaginaSelected(pagina)">@pagina</button>
+                </li>
+            }
+            </ul>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int TotalItems { get; set; }
+    [Parameter] public int ItemsPorPagina { get; set; }
+    [Parameter] public int PaginaActual { get; set; }
+
+    [Parameter] public EventCallback<int> OnCambioDePagina { get; set; }
+
+    public int TotalPaginas
+    {
+        get
+        {
+            if (ItemsPorPagina>0)
+                return Convert.ToInt32( Math.Ceiling( 1.0*TotalItems/ItemsPorPagina ) );
+            return 0;
+        }    
+    }
+
+    private async Task PaginaSelected(int n)
+    {
+        if(PaginaActual!=n)
+        {
+            PaginaActual = n;
+            await OnCambioDePagina.InvokeAsync(n);
+        }
+    }
+}
