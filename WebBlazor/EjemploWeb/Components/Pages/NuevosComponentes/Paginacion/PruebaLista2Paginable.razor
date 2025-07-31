@@ -40,7 +40,7 @@
         </tbody>
     </table>
 
-    <Paginacion2Component TotalItems="@_personas.Count" ItemsPorPagina="@itemsPorPagina" OnCambioDePagina="OnCambioDePagina" />
+    <Paginacion2Component TotalItems="@_personas.Count" PaginasVisibles=3  ItemsPorPagina="@itemsPorPagina" OnCambioDePagina="OnCambioDePagina" />
 </div>
 
 @code {
@@ -60,9 +60,12 @@
         new Persona{ Dni=43343243, Nombre="Norberto" },
         new Persona{ Dni=35343243, Nombre="Andrés" },
         new Persona{ Dni=43343241, Nombre="Estefanía" },
-        new Persona{ Dni=35343242, Nombre="Daniela" },
-        new Persona{ Dni=35366242, Nombre="Estela" },
-        new Persona{ Dni=35359242, Nombre="Hernan" },
+        new Persona{ Dni=20343242, Nombre="Daniela" },
+        new Persona{ Dni=29366242, Nombre="Estela" },
+        new Persona{ Dni=30359242, Nombre="Hernan" },
+        new Persona{ Dni=31343241, Nombre="Daniela" },
+        new Persona{ Dni=32362241, Nombre="Graciela" },
+        new Persona{ Dni=35353242, Nombre="Gustavo" },
     };
     private List<Persona> _personasPaginadas
     {
