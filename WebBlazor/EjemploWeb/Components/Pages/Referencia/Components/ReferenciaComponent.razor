@@ -1,0 +1,12 @@
+﻿<h3>ReferenciaComponent</h3>
+
+@namespace Ejemplos.Components
+
+<InputText @bind-Value="Mensaje"></InputText>
+
+@code {
+    [Parameter] public int Cantidad{ get; set; }
+    [Parameter] public string Mensaje { get; set; }
+    [Parameter] public string Entrada { get; set; }
+
+}

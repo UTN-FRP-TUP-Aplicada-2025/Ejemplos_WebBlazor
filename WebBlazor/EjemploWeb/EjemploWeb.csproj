@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Components\Pages\NuevosComponentes\Paginacion\PruebaLista2Paginable.razor" />
+    <None Include="Components\Pages\Paginador\DemoCompletoPaginador.razor" />
   </ItemGroup>
 
 </Project>

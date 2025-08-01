@@ -1,0 +1,56 @@
+﻿@page "/demo-referencia"
+
+@using Ejemplos.Components
+
+<h3>PruebaReferencia</h3>
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<div class="col-6">
+    <div class="card">
+
+        <InputText @bind-Value="entrada"></InputText>
+        <button @onclick="OnClick">Cambiar</button>
+    </div>
+
+    <div class="card">
+        <div class="card-heard">
+
+            <InputCheckbox @bind-Value="mostrar">mostrar</InputCheckbox>
+        </div>
+
+        <div class="card-body">
+            @if (mostrar)
+            {
+                <ReferenciaComponent @ref="referencia" Mensaje="@mensaje"  Entrada="@entrada"/>
+            }
+            <div>
+                Referencia es : @mensaje
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    int numero;
+    bool mostrar = false;
+    string mensaje;
+    string entrada;
+
+    ReferenciaComponent referencia;
+
+    async public Task OnClick()
+    {
+        if (referencia != null)
+        {
+           // mensaje = +mensaje;
+        }
+        else
+        {
+            mensaje = "referencia es null";
+        }
+
+    }
+
+}

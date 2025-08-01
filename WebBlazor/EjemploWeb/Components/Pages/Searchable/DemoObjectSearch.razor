@@ -1,0 +1,144 @@
+﻿@page "/demo-object-search"
+
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+
+<section class="content file_manager">
+    <div class="container-fluid">
+
+        <div class="block-header">
+            <div class="row clearfix">
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    <h2>Documentos</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+
+            <div class="col-md-8 col-12">
+
+                <div class="card">
+
+                    @foreach (var item in personasResult)
+                    {
+                        <div class="body">
+                            <div class="row">
+                                <div>@item.Nombre</div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <div class="col-md-4 col-12">
+                <div class="row">
+                   
+                    @* <div class="input-group">
+                        <button class="btn btn-outline-secondary" @onclick="OnSearchText">
+                            <span class="input-group-addon"><i class="zmdi zmdi-account-circle"></i></span>
+                        </button>
+                        <InputText class="form-control" id="searchClients" placeholder="Buscar sector" @bind-Value="searchText" @oninput="OnSearchInput" />
+                    </div> *@
+
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="input-group m-b-0">
+                            <InputText type="text" class="form-control" @bind-Value="searchText" @oninput="OnSearchInput" placeholder="Search..." />
+                            <span class="input-group-addon"> <i class="zmdi zmdi-search"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        @foreach (var item in personasResult)
+                        {
+                            <div class="body mb-3">
+                                <div>@item.Nombre</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@code {
+    string searchText;
+
+    PersonaViewModel view = new();
+
+    List<PersonaViewModel> personas = new()
+    {
+        new PersonaViewModel
+        {
+            Dni=23432432,
+            Nombre="Juan"
+        },
+        new PersonaViewModel
+        {
+            Dni=33432432,
+            Nombre="Maria"
+        },
+        new PersonaViewModel
+        {
+            Dni=37832432,
+            Nombre="Rosa"
+        }
+        ,
+        new PersonaViewModel
+        {
+            Dni=37832432,
+            Nombre="Juan Alberto"
+        },
+        new PersonaViewModel
+        {
+            Dni=37832432,
+            Nombre="José María"
+        },
+        new PersonaViewModel
+        {
+            Dni=37832432,
+            Nombre="Ana Maria"
+        }
+    };
+    List<PersonaViewModel> personasResult = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        personasResult = personas;
+        return base.OnInitializedAsync();
+    }
+
+
+    async Task OnSearchText()
+    {
+        personasResult = personas.Where(p => p.Nombre.Contains(searchText??"", StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    string RemoveDiacritics(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return string.Empty;
+
+        var normalized = text.Normalize(System.Text.NormalizationForm.FormD);
+        var chars = normalized.Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark);
+        return new string(chars.ToArray()).Normalize(System.Text.NormalizationForm.FormC);
+    }
+
+    async Task OnSearchInput(ChangeEventArgs e)
+    {
+        searchText = e.Value?.ToString() ?? "";
+        var search = RemoveDiacritics(searchText).ToLowerInvariant();
+        personasResult = string.IsNullOrWhiteSpace(search)? personas : personas.Where(p => RemoveDiacritics(p.Nombre).ToLowerInvariant().Contains(search)).ToList();
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+
+    class PersonaViewModel
+    {
+        public int Dni { get; set; }
+        public string Nombre { get; set; }
+    }
+}
