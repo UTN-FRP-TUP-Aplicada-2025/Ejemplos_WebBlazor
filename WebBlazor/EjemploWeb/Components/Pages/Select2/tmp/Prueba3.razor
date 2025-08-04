@@ -1,0 +1,65 @@
+﻿@page "/prueba7"
+
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+
+<div class="card">
+    <div class="group-form">
+        <label>Colores</label>
+        <InputSelect @bind-Value="idColorSelected" @bind-Value:after="OnColorChange">
+            <option value="0">Seleccionar un color</option>
+            <option value="1">
+                <InputText @bind-Value="searchText" @oninput="OnSearchText"></InputText>
+            </option>
+            @foreach (var item in categoriasResult)
+            {
+                <option value="@item.Id">@item.Descripcion</option>
+            }
+        </InputSelect>
+    </div>
+</div>
+
+<div class="card">
+    @if (colorSelected != null)
+    {
+        @colorSelected.Descripcion;
+    }
+    else
+    {
+        <span>Seleccionar color</span>
+    }
+</div>
+
+@code {
+    string searchText;
+
+    async Task OnSearchText()
+    {
+        categoriasResult = categorias.Where(p => p.Descripcion.Contains(searchText ?? "", StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    int idColorSelected;
+    ColorViewModel colorSelected;
+
+    async protected Task OnColorChange()
+    {
+        colorSelected = categorias.Where(color => color.Id == idColorSelected).First();
+    }
+
+    List<ColorViewModel> categorias = new List<ColorViewModel>
+    {
+        new ColorViewModel{ Id=1, Descripcion="Blanco" },
+        new ColorViewModel{ Id=2, Descripcion="Rojo" },
+        new ColorViewModel{ Id=3, Descripcion="Azul" },
+        new ColorViewModel{ Id=4, Descripcion="Verde" },
+        new ColorViewModel{ Id=5, Descripcion="Amarillo" },
+    };
+
+    List<ColorViewModel> categoriasResult = new List<ColorViewModel>();
+
+    class ColorViewModel
+    {
+        public int Id { get; set; }
+        public string Descripcion { get; set; }        
+    }
+}

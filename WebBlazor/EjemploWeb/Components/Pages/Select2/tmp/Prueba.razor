@@ -1,0 +1,75 @@
+﻿@page "/prueba3"
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+
+<div class="card">
+    <div class="group-form">
+        <label>Colores</label>
+        <input @bind="textoColor" @bind:event="oninput" @onchange="OnColorTextChange"
+               list="colores-list" placeholder="Escriba o seleccione un color" />
+
+        <datalist id="colores-list">
+            @foreach (var color in categorias)
+            {
+                <option value="@color.Descripcion">@color.Descripcion</option>
+            }
+        </datalist>
+    </div>
+</div>
+
+<div class="card">
+    @if (colorSelected != null)
+    {
+        <span>Color seleccionado: @colorSelected.Descripcion</span>
+    }
+    else
+    {
+        <span>Escriba o seleccione un color</span>
+    }
+</div>
+
+@code {
+
+
+    string textoColor = "";
+    ColorViewModel? colorSelected;
+
+    async Task OnColorTextChange()
+    {
+        if (!string.IsNullOrWhiteSpace(textoColor))
+        {
+            // Buscar coincidencia exacta
+            colorSelected = categorias.FirstOrDefault(c =>
+                c.Descripcion.Equals(textoColor, StringComparison.OrdinalIgnoreCase));
+
+            // Si no hay coincidencia exacta, crear un nuevo color
+            if (colorSelected == null)
+            {
+                colorSelected = new ColorViewModel
+                {
+                    Id = 0,
+                    Descripcion = textoColor
+                };
+            }
+        }
+        else
+        {
+            colorSelected = null;
+        }
+    }
+
+    List<ColorViewModel> categorias = new List<ColorViewModel>
+    {
+        new ColorViewModel { Id = 1, Descripcion = "Blanco" },
+        new ColorViewModel { Id = 2, Descripcion = "Rojo" },
+        new ColorViewModel { Id = 3, Descripcion = "Azul" },
+        new ColorViewModel { Id = 4, Descripcion = "Verde" },
+        new ColorViewModel { Id = 5, Descripcion = "Amarillo" }
+    };
+
+    class ColorViewModel
+    {
+        public int Id { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
+    }
+}

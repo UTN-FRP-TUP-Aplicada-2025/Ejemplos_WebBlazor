@@ -33,7 +33,20 @@
 }
 
 @code {
-    [Parameter] public int TotalItems { get; set; }
+    private int totalItems;
+    [Parameter] public int TotalItems 
+    {
+        get { return totalItems; }
+        set
+        {
+            if (totalItems != value)
+            {
+                totalItems = value;
+                CambiarPagina(1);
+            }
+        }
+    }
+
     [Parameter] public int ItemsPorPagina { get; set; } = 10;
     [Parameter] public int PaginasVisibles { get; set; } = 5;
 

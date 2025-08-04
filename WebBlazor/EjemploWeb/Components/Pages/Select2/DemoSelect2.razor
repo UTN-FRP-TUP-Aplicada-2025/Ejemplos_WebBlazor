@@ -1,0 +1,176 @@
+﻿@page "/demo-select2"
+
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+
+<div class="card">
+    <div class="group-form">
+        <label>Colores</label>
+        <div class="select2-container" style="position: relative; width: 250px;">
+            <!-- Campo de búsqueda/selección -->
+            <div class="select2-selection" @onclick="ToggleDropdown"
+                 style="border: 1px solid #ccc; padding: 8px 12px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <span>@GetDisplayText()</span>
+                <span style="font-size: 12px;">@(isOpen ? "▲" : "▼")</span>
+            </div>
+
+            <!-- Dropdown -->
+            @if (isOpen)
+            {
+                <div class="select2-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; border-top: none; max-height: 200px; overflow-y: auto; z-index: 1000;">
+                    <!-- Campo de búsqueda -->
+                    <div style="padding: 8px; border-bottom: 1px solid #eee;">
+                        <input @bind="searchText" @bind:event="oninput" @onkeyup="OnSearchText"
+                               placeholder="Buscar color..."
+                               style="width: 100%; padding: 4px; border: 1px solid #ddd; outline: none;"
+                               @onclick:stopPropagation />
+                    </div>
+
+                    <!-- Opciones -->
+                    <div class="select2-results">
+                        @if (!categoriasResult.Any())
+                        {
+                            <div style="padding: 8px; color: #999; font-style: italic;">
+                                No se encontraron resultados
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var item in categoriasResult)
+                            {
+                                <div @onclick="() => SelectColor(item)"
+                                     @onmouseover="() => hoveredId = item.Id"
+                                     style="padding: 8px 12px; cursor: pointer; @(hoveredId == item.Id ? "background-color: #f0f0f0;" : "") @(colorSelected?.Id == item.Id ? "background-color: #007bff; color: white;" : "")"
+                                     class="select2-result">
+                                    @item.Descripcion
+                                </div>
+                            }
+                        }
+
+                        <!-- Opción para crear nuevo color si no existe -->
+                        @if (!string.IsNullOrWhiteSpace(searchText) && !categoriasResult.Any(c => c.Descripcion.Equals(searchText, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <div @onclick="() => CreateNewColor()"
+                                 style="padding: 8px 12px; cursor: pointer; background-color: #f8f9fa; font-style: italic; border-top: 1px solid #eee;">
+                                + Crear "@searchText"
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    @if (colorSelected != null)
+    {
+        <span>Color seleccionado: @colorSelected.Descripcion (ID: @colorSelected.Id)</span>
+    }
+    else
+    {
+        <span>Seleccionar color</span>
+    }
+</div>
+
+<!-- Click fuera para cerrar dropdown -->
+@if (isOpen)
+{
+    <div @onclick="CloseDropdown" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999;"></div>
+}
+
+
+
+@code {
+    string searchText = "";
+    bool isOpen = false;
+    int hoveredId = -1;
+    ColorViewModel? colorSelected;
+    List<ColorViewModel> categoriasResult = new();
+
+    protected override void OnInitialized()
+    {
+        categoriasResult = categorias.ToList();
+    }
+
+    void ToggleDropdown()
+    {
+        isOpen = !isOpen;
+        if (isOpen)
+        {
+            searchText = "";
+            categoriasResult = categorias.ToList();
+        }
+    }
+
+    void CloseDropdown()
+    {
+        isOpen = false;
+        hoveredId = -1;
+    }
+
+    async Task OnSearchText()
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            categoriasResult = categorias.ToList();
+        }
+        else
+        {
+            categoriasResult = categorias
+                .Where(p => p.Descripcion.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+        StateHasChanged();
+    }
+
+    void SelectColor(ColorViewModel color)
+    {
+        colorSelected = color;
+        CloseDropdown();
+        StateHasChanged();
+    }
+
+    void CreateNewColor()
+    {
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            var newId = categorias.Max(c => c.Id) + 1;
+            var newColor = new ColorViewModel
+            {
+                Id = newId,
+                Descripcion = searchText.Trim()
+            };
+
+            categorias.Add(newColor);
+            colorSelected = newColor;
+            CloseDropdown();
+            StateHasChanged();
+        }
+    }
+
+    string GetDisplayText()
+    {
+        return colorSelected?.Descripcion ?? "Seleccionar un color";
+    }
+
+    List<ColorViewModel> categorias = new List<ColorViewModel>
+    {
+        new ColorViewModel { Id = 1, Descripcion = "Blanco" },
+        new ColorViewModel { Id = 2, Descripcion = "Rojo" },
+        new ColorViewModel { Id = 3, Descripcion = "Azul" },
+        new ColorViewModel { Id = 4, Descripcion = "Verde" },
+        new ColorViewModel { Id = 5, Descripcion = "Amarillo" },
+        new ColorViewModel { Id = 6, Descripcion = "Negro" },
+        new ColorViewModel { Id = 7, Descripcion = "Rosa" },
+        new ColorViewModel { Id = 8, Descripcion = "Morado" },
+        new ColorViewModel { Id = 9, Descripcion = "Naranja" },
+        new ColorViewModel { Id = 10, Descripcion = "Café" }
+    };
+
+    class ColorViewModel
+    {
+        public int Id { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
+    }
+}

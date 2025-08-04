@@ -16,13 +16,15 @@
         <div class="card">
             <InputSelect @bind-Value="idCategoriaSelected" @bind-Value:after="OnCategoriaChanged">
                 <option value="0">Seleccione</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
+                @foreach (var item in categorias)
+                {
+                    <option value="@item.Id">@item.Descripcion</option>
+                }
             </InputSelect>
         </div>
 
 
-        @if (categoriaSelected != null && categoriaSelected .Cantidad> 0)
+        @if (categoriaSelected != null && categoriaSelected.Cantidad> 0)
         {
 
             <div class="card">
@@ -66,8 +68,10 @@
                     </tbody>
                 </table>
 
-                <CompletoPaginadorComponent TotalItems="@_personas.Count" PaginasVisibles="3" ItemsPorPagina="@itemsPorPagina"
-                                            PaginaActual="@paginaActual" OnCambioDePagina="OnCambioDePagina" />
+                <CompletoPaginadorComponent TotalItems="@categoriaSelected.Cantidad" 
+                                            PaginasVisibles="3" 
+                                            ItemsPorPagina="@itemsPorPagina"
+                                            @bind-PaginaActual="paginaActual" OnCambioDePagina="OnCambioDePagina" />
             </div>
         }
     </div>
@@ -77,13 +81,19 @@
     int? idCategoriaSelected { get; set; }
     Categoria categoriaSelected { get; set; }
 
+    List<Categoria> categorias = new List<Categoria>
+    {
+        new Categoria{Id=1,Descripcion="1",Cantidad=11},
+        new Categoria{Id=2,Descripcion="2",Cantidad=3},
+        new Categoria{Id=3,Descripcion="3",Cantidad=0},
+    };
+
     private int itemsPorPagina = 4;
     private int paginaActual = 1;
 
 
     private async Task OnCambioDePagina(int nuevaPagina)
     {
-        paginaActual = nuevaPagina;
         StateHasChanged();
     }
 
@@ -129,12 +139,17 @@
     {
         if (idCategoriaSelected != null)
         {
-            int cantidad = 0;
-            if (idCategoriaSelected >= 1) cantidad = _personas.Count;
 
-            categoriaSelected = new Categoria { Id = Convert.ToInt32(idCategoriaSelected), Descripcion = idCategoriaSelected.ToString(), Cantidad = _personas.Count };
+            categoriaSelected = categorias.Where(item => item.Id == idCategoriaSelected).First();
+
 
             _personas = GetPersonaCategoriaUno(idCategoriaSelected ?? 0);
+
+
+        }
+        else
+        {
+            categoriaSelected = null;
         }
     }
 

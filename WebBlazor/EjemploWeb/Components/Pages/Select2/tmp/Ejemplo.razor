@@ -1,0 +1,50 @@
+﻿@page "/select2"
+
+<h3>Ejemplo</h3>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejemplo Select2 - Colores</title>
+
+    <!-- CSS de Select2 desde CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- JS de Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 30px;
+        }
+
+        .select2-container {
+            width: 200px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Elegí un color:</h2>
+
+    <select id="colores" style="width: 200px;">
+        <option value="blanco">Blanco</option>
+        <option value="rojo">Rojo</option>
+        <option value="azul">Azul</option>
+    </select>
+
+    <script>
+        $(document).ready(function() {
+          $('#colores').select2({
+            placeholder: 'Seleccioná un color',
+            allowClear: true
+          });
+        });
+    </script>
+
+</body>
+</html>
