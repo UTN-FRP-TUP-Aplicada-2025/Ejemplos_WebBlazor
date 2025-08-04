@@ -5,7 +5,8 @@
     <div class="group-form">
         <label>@Label</label>
         <div class="select2-container" style="position: relative; width: @Width;">
-            <!-- Campo de búsqueda/selección -->
+            
+            <!-- Busqueda-->
             <div class="select2-selection" @onclick="ToggleDropdown"
                  style="border: 1px solid #ccc; padding: 8px 12px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                 <span>@GetDisplayText()</span>
@@ -67,7 +68,7 @@
 }
 
 @code {
-    // Parámetros del componente
+    #region parametros
     [Parameter] public List<TItem> Items { get; set; } = new();
     [Parameter] public TItem? SelectedItem { get; set; }
     [Parameter] public EventCallback<TItem?> SelectedItemChanged { get; set; }
@@ -79,8 +80,8 @@
     [Parameter] public string EmptyText { get; set; } = "Seleccionar una opción";
     [Parameter] public bool AllowCreate { get; set; } = false;
     [Parameter] public Func<string, TItem>? CreateItemFunc { get; set; }
+    #endregion
 
-    // Variables internas
     private string searchText = "";
     private bool isOpen = false;
     private TItem? hoveredItem;
